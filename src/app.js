@@ -14,5 +14,17 @@ app.use(express.urlencoded({extended:true,limit:"16kb"}))
 app.use(express.static("Public_asset"))
 app.use(cookieParser()) 
 
+// Routes Import
+import userRouter from './routes/user.route.js'
 
-export default app
+app.get('/', (req, res) => {
+    res.send('Hello, World!');
+});
+
+// Routes Declaration
+app.use("/api/v1/users",userRouter)
+//prefix+users+register later
+//http:localhost:8000/api/v1/users/register
+//
+
+export {app}

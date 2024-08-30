@@ -1,7 +1,7 @@
 // require('dotenv').config() // using esm module type hence not workinh
 import connectdb from "./db/index.js"; 
 import dotenv from 'dotenv';
-import app from './app.js'
+import {app} from './app.js'
 
 dotenv.config();
 
