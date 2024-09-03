@@ -1,11 +1,15 @@
 // require('dotenv').config() // using esm module type hence not workinh
-import connectdb from "./db/index.js"; 
 import dotenv from 'dotenv';
+import connectdb from "./db/index.js"; 
 import {app} from './app.js'
 
-dotenv.config();
 
-console.log(process.env)
+dotenv.config({
+    path:"./.env"
+});
+
+// console.log(process.env)
+// console.log(process.env.CLOUDINARY_CLOUD_NAME, process.env.CLOUDINARY_API_KEY, process.env.CLOUDINARY_SECRET_KEY);
 
 connectdb()
 .then(() => {

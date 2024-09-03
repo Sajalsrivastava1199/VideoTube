@@ -1,25 +1,30 @@
 import { v2 as cloudinary } from 'cloudinary';
 import fs from "fs"
 
-cloudinary.config({ 
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-    api_key: process.env.CLOUDINARY_API_KEY, 
-    api_secret: process.env.CLOUDINARY_SECRET_KEY // Click 'View API Keys' above to copy your API secret
-});
+// console.log("HELLO",process.env.MONGODB_URL,process.env.CLOUDINARY_CLOUD_NAME)
+
 
 const uploadOnCloudinary = async (localFilePath) =>{
+    cloudinary.config({ 
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+        api_key: process.env.CLOUDINARY_API_KEY, 
+        api_secret: process.env.CLOUDINARY_SECRET_KEY,
+        secure: true
+    });
+    // Config Needs to be inside
     try{
         if(!localFilePath) return null
         // Upload file to cloudinary
         const response = await cloudinary.uploader.upload(localFilePath,{
             resource_type:"auto"
         })
-        console.log("File Uploaded Successfully",response,response.url)
+        // console.log("File Uploaded Successfully", cloudinary.config().cloud_name,response,response.url)
+        fs.unlinkSync(localFilePath) // remove the file from local path
         return response
     }
     catch(error){
         fs.unlinkSync(localFilePath) // remove the file from local path
-        console.log(error)
+        console.log("why", cloudinary.config().cloud_name,error)
         return null
     }
 }

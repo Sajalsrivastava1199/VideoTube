@@ -53,7 +53,7 @@ userSchema.pre("save",async function(req,res,error,next){
     if(this.isModified("password")){
         this.password = await bcrypt.hash(this.password,10)
     }
-    next()
+    return next
     
 })//()=>{} this is not used as context is not carried
 
