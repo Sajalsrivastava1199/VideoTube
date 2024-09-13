@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
+import { error } from 'console';
 import fs from "fs"
 
 // console.log("HELLO",process.env.MONGODB_URL,process.env.CLOUDINARY_CLOUD_NAME)
@@ -29,7 +30,32 @@ const uploadOnCloudinary = async (localFilePath) =>{
     }
 }
 
-export {uploadOnCloudinary} 
+const deleteFromCloudinary = async(publicUrl) =>{
+    cloudinary.config({ 
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+        api_key: process.env.CLOUDINARY_API_KEY, 
+        api_secret: process.env.CLOUDINARY_SECRET_KEY,
+        secure: true
+    });
+    // Config Needs to be inside
+    try {
+        if(!publicUrl){
+            return null
+        }
+        resposne = await cloudinary.uploader.destroy(publicUrl, function(result) { console.log(result) })
+        return response
+    } catch (error) {
+        console.log("Issue while deleting old Image from Cloudinary Storage",error)
+        return null;
+        
+    }
+
+}
+
+export {
+    uploadOnCloudinary,
+    deleteFromCloudinary,
+} 
 
 // Upload an image
 // const uploadResult = await cloudinary.uploader

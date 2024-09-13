@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import {apiError} from '../utils/apiError.js'
 import validator from "validator";
 import { user } from "../models/user.models.js";
-import { uploadOnCloudinary } from "../utils/fileupload.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/fileupload.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken"
 
@@ -251,6 +251,8 @@ const avatarUpdate = asyncHandler(async(req,res)=>{
     if(avatar.url){
         throw new apiError(401,"Error while Uploading Avatar file")
     }
+    
+
     const User = await user.findByIdAndUpdate(
         req.user._id,
         {
@@ -260,6 +262,10 @@ const avatarUpdate = asyncHandler(async(req,res)=>{
         },
         {new:true}
     ).select("-password")
+
+    const oldAvatarUrl = req.user.avatar
+    await deleteFromCloudinary(oldAvatarUrl)
+    
     return res.status(200)
     .json(
         new apiResponse(200,User,"Avatar Updated")
@@ -275,6 +281,7 @@ const coverImageUpdate = asyncHandler(async(req,res)=>{
     if(coverImage.url){
         throw new apiError(401,"Error while Uploading coverImage file")
     }
+    
     const User = await user.findByIdAndUpdate(
         req.user._id,
         {
@@ -284,9 +291,139 @@ const coverImageUpdate = asyncHandler(async(req,res)=>{
         },
         {new:true}
     ).select("-password")
+    const coverImageUrl = req.user.coverImage
+    await deleteFromCloudinary(coverImageUrl)
+
     return res.status(200)
     .json(
         new apiResponse(200,User,"Cover Image Updated")
+    )
+})
+
+const getUserChannelProfile = asyncHandler(async(req,res)=>{
+    const {username} = req?.params
+    if(!username?.trim){
+        throw new apiError(400,"Username Not found")
+    }
+    // const User = user.findById({username})// this is good 
+    // But can be clubbed inside aggragation pipeline 
+
+    const channel = await user.aggregate([
+        {
+            $match:{
+                username:username?.toLowerCase()
+            }
+        },
+        {
+            $lookup:{
+                from:"subscriptions",
+                localField:"_id",
+                foreignField:"channel",
+                as:"subscribers"
+
+            }
+        },
+        {
+            $lookup:{
+                from:"subscriptions",
+                localField:"_id",
+                foreignField:"subscriber",
+                as:"subscribedTo"
+            }
+        },
+        {
+            $addFields:{
+                subscribersCount:{
+                    $size:"$subscribers"
+                },
+                channelssubscribedCount:{
+                    $size:"$subscribedTo"
+                },
+                isSuscribed:{
+                    $cond:{
+                        if:{$in:[req.user?._id,"$subscribers.subscriber"]},
+                        then:true,
+                        else:false
+                    }
+                }
+            }
+        },
+        {
+            $project:   {
+                fullname:1,
+                username:1,
+                subscribersCount:1,
+                isSuscribed:1,
+                avatar:1,
+                coverImage:1,
+                createdat:1            
+            }
+        }
+    ])
+    console.log(channel)
+    if(!channel?.length){
+        throw new apiError(404,"Channel does not exist")
+    }
+    return res
+    .status(200)
+    .json(
+        new apiResponse(200,channel[0],"User Channel Info Fetched successfuly")
+    )
+})
+
+const getWatchHistory = asyncHandler(async(req,res)=>{
+    const User = await user.aggregate(
+        [
+            {
+                $match:{
+                    _id: new mongoose.Types.ObjectId(req.user?._id)
+                }
+            },
+            {
+                $lookup:{
+                    from:"videos",
+                    localField:"watchHistory",
+                    foreignField:"_id",
+                    as:"watchHistoryVideos",
+                    pipeline:[
+                        {
+                            $lookup:{
+                                from:"users",
+                                localField:"owner",
+                                foreignField:"_id",
+                                as:"owner",
+                                pipeline:[
+                                    {
+                                        $project:{
+                                            fullname:1,
+                                            username:1,
+                                            avatar:1
+                                        
+                                        }
+                                    }
+                                ]
+                            }
+
+                        },
+                        {
+                            $addFields:{
+                                owner:{
+                                    $first:"$owner"
+                                }
+                            }
+                        }
+                    ],
+
+                }
+            }
+
+        ]
+    )
+    return res.status(200)
+    .json(
+        new apiResponse(200,
+            User[0].watchHistoryVideos,
+            "watchHistoryVideos Fetched Successfuly")
     )
 })
 
@@ -299,6 +436,9 @@ export {
     getCurrentUser,
     updateAccountDetails,
     avatarUpdate,
-    coverImageUpdate
+    coverImageUpdate,
+    getUserChannelProfile,
+    getWatchHistory
 } 
+
 
