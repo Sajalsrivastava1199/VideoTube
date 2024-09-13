@@ -301,7 +301,7 @@ const coverImageUpdate = asyncHandler(async(req,res)=>{
 })
 
 const getUserChannelProfile = asyncHandler(async(req,res)=>{
-    const {username} = req?.params
+    const {username} = req?.params// As it is taken from params route needs to be differently handled
     if(!username?.trim){
         throw new apiError(400,"Username Not found")
     }
