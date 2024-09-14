@@ -146,7 +146,9 @@ const logoutUser = asyncHandler(async(req,res) =>{
         await user.findByIdAndUpdate(
             Userid,
             {
-                $set:{"refreshToken":undefined}
+                $unset:{
+                    "refreshToken":1//This unsets the field 
+                }
             },
             {  
                 new:true
@@ -166,11 +168,16 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{
     // cookie se AT --> 
     try {
         const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+        
         if(!incomingRefreshToken){
             throw new apiError(401,"UnAuthorized Request")
         }
         const decodedRefreshToken = jwt.verify(incomingRefreshToken,process.env.REFRESH_TOKEN_SECRET)
-        const User = await user.findById(decodedRefreshToken?._id)
+            const User = await user.findById(
+                decodedRefreshToken?._id
+            )
+            console.log(User,decodedRefreshToken?._id)
+            console.log("1",User.refreshToken,incomingRefreshToken)
         if(!User){
             throw new apiError(401,"Invalid RefreshToken")
         }
@@ -181,6 +188,7 @@ const refreshAccessToken = asyncHandler(async(req,res)=>{
             httpOnly:true,
             secure:true
         }
+        
         const {newrefreshToken,accessToken} = await generateAccessAndRefreshToken(User._id)
         return res
         .status(200)

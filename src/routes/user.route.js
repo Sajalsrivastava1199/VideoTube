@@ -1,8 +1,19 @@
 import { Router } from "express";
-import { changeCurrentPassword, coverImageUpdate, getCurrentUser, getUserChannelProfile, loginUser, logoutUser, refreshAccessToken, registerUser, updateAccountDetails } from "../controllers/user.controller.js";
+import { 
+    registerUser,
+    loginUser,
+    logoutUser,
+    refreshAccessToken,
+    changeCurrentPassword,
+    getCurrentUser,
+    updateAccountDetails,
+    avatarUpdate,
+    coverImageUpdate,
+    getUserChannelProfile,
+    getWatchHistory
+         } from "../controllers/user.controller.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from "../middleware/auth.middleware.js"
-import { verify } from "jsonwebtoken";
 const router = Router()
 
 router.route("/register").post(
