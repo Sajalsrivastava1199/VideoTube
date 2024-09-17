@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from 'cloudinary';
-import { error } from 'console';
 import fs from "fs"
 
 // console.log("HELLO",process.env.MONGODB_URL,process.env.CLOUDINARY_CLOUD_NAME)
@@ -42,7 +41,7 @@ const deleteFromCloudinary = async(publicUrl) =>{
         if(!publicUrl){
             return null
         }
-        resposne = await cloudinary.uploader.destroy(publicUrl, function(result) { console.log(result) })
+        resposne = await cloudinary.uploader.destroy(publicUrl, function() { console.log("Done") })
         return response
     } catch (error) {
         console.log("Issue while deleting old Image from Cloudinary Storage",error)

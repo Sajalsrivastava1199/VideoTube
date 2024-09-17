@@ -23,4 +23,4 @@ const commentSchema = new Schema(
 )
 commentSchema.plugin(mongooseAggregatePaginate)// allows to write aggregate queries
 
-export const comment = model("video",commentSchema)// Lowercase aur 's added by mongo db
+export const comment = model("comment",commentSchema)// Lowercase aur 's added by mongo db
