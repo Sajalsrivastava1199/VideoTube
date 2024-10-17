@@ -1,12 +1,9 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import {apiError} from '../utils/apiError.js'
 import { comment } from "../models/comment.models.js"
 import { video } from "../models/video.models.js";
-import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/fileupload.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import mongoose, { isValidObjectId } from "mongoose";
-import {subscription} from "../models/subscription.model.js"
-import { user } from "../models/user.models.js";
+import { subscription } from "../models/subcription.models.js"
 
 
 const getChannelStats = asyncHandler(async (req, res) => {

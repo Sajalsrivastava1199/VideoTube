@@ -1,5 +1,5 @@
 import mongoose, {isValidObjectId} from "mongoose"
-import {user} from "../models/user.model.js"
+import {user} from "../models/user.models.js"
 import { subscription } from "../models/subcription.models.js"
 import {apiError} from "../utils/apiError.js"
 import {apiResponse} from "../utils/apiResponse.js"
