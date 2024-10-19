@@ -2,8 +2,7 @@ import express, { urlencoded } from "express"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 import limiter from "./middleware/rateLimiter.middleware.js"
-
-
+import { Router } from "express";
 const app = express()
 app.use(cors({
     origin:process.env.CORS_ORIGIN,
@@ -16,6 +15,11 @@ app.use(express.urlencoded({extended:true,limit:"16kb"}))
 app.use(express.static("Public_asset"))
 app.use(cookieParser()) 
 
+const router = Router()
+
+router.route("/test").get((req, res) => {
+    return res.send("This is a simple test message.");
+})
 // Routes Import
 import userRouter from './routes/user.route.js'
 import commentRouter from './routes/comment.route.js'
