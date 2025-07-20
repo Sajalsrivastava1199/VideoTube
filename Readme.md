@@ -89,4 +89,4 @@ The Videotube project includes a powerful aggregation pipeline designed to extra
 
 ## Contributing
 
-If you wish to contribute to this project, please feel free to contribute.
+If you wish to contribute to this project, please feel free to do so.
