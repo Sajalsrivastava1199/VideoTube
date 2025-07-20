@@ -61,7 +61,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
         }
     )
     const contentCreator = req.user._id
-    let emails = ["devanshchowdhury@gmail.com"]
+    let emails = ["sajcheeku@gmail.com"]
     // try {
     //     const result = await subscription.aggregate([
     //       {
