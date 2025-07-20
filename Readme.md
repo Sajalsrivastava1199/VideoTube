@@ -68,7 +68,7 @@ The Videotube project includes a powerful aggregation pipeline designed to extra
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/Devanshchowdhury2212/End-to-End-Backend
+    git clone https://github.com/Sajalsrivastava1199/VideoTube
     ```
 
 2. **Install dependencies:**
